@@ -1,50 +1,38 @@
 <?php
 /**
- * Dice.fm Event Import Handler Settings
- * 
- * Defines settings fields and sanitization for Dice.fm event import handler.
- * Part of the modular handler architecture for Data Machine integration.
+ * DoStuff Media API Event Import Handler Settings
  *
- * @package DataMachineEvents\Steps\EventImport\Handlers\DiceFm
- * @since 1.0.0
+ * Defines settings fields and sanitization for DoStuff Media API import handler.
+ * No authentication required - works with public JSON feeds.
+ *
+ * @package DataMachineEvents\Steps\EventImport\Handlers\DoStuffMediaApi
  */
 
-namespace DataMachineEvents\Steps\EventImport\Handlers\DiceFm;
+namespace DataMachineEvents\Steps\EventImport\Handlers\DoStuffMediaApi;
 
-// Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * DiceFmSettings class
- * 
- * Configuration fields for Dice.fm API event import.
- */
-class DiceFmSettings {
-    
-    /**
-     * Constructor
-     * Pure filter-based architecture - no dependencies.
-     */
+class DoStuffMediaApiSettings {
+
     public function __construct() {
-        // No constructor dependencies - all services accessed via filters
     }
-    
+
     /**
-     * Get settings fields for Dice.fm event import handler
+     * Get settings fields for DoStuff Media API import handler
      *
      * @param array $current_config Current configuration values for this handler
      * @return array Associative array defining the settings fields
      */
     public static function get_fields(array $current_config = []): array {
         return [
-            'city' => [
+            'feed_url' => [
                 'type' => 'text',
-                'label' => __('City', 'datamachine-events'),
-                'description' => __('City name to search for events (required). This is the primary filter for Dice.fm API.', 'datamachine-events'),
-                'placeholder' => __('Charleston', 'datamachine-events'),
-                'required' => true,
+                'label' => __('Feed URL', 'datamachine-events'),
+                'description' => __('DoStuff Media JSON feed URL (e.g., http://events.waterloorecords.com/events.json)', 'datamachine-events'),
+                'placeholder' => __('http://events.venue-name.com/events.json', 'datamachine-events'),
+                'required' => true
             ],
             'search' => [
                 'type' => 'text',
@@ -62,39 +50,41 @@ class DiceFmSettings {
             ]
         ];
     }
-    
+
     /**
-     * Sanitize Dice.fm handler settings.
+     * Sanitize DoStuff Media API handler settings
      *
-     * @param array $raw_settings Raw settings input.
-     * @return array Sanitized settings.
+     * @param array $raw_settings Raw settings input
+     * @return array Sanitized settings
      */
     public static function sanitize(array $raw_settings): array {
+        $feed_url = trim($raw_settings['feed_url'] ?? '');
+
         return [
-            'city' => sanitize_text_field($raw_settings['city'] ?? ''),
+            'feed_url' => esc_url_raw($feed_url),
             'search' => sanitize_text_field($raw_settings['search'] ?? ''),
             'exclude_keywords' => sanitize_text_field($raw_settings['exclude_keywords'] ?? '')
         ];
     }
-    
+
     /**
-     * Determine if authentication is required.
+     * Determine if authentication is required
      *
-     * @param array $current_config Current configuration values.
-     * @return bool True if authentication is required.
+     * @param array $current_config Current configuration values
+     * @return bool True if authentication is required
      */
     public static function requires_authentication(array $current_config = []): bool {
-        return true; // Dice.fm requires API key authentication
+        return false;
     }
-    
+
     /**
-     * Get default values for all settings.
+     * Get default values for all settings
      *
-     * @return array Default values.
+     * @return array Default values
      */
     public static function get_defaults(): array {
         return [
-            'city' => '',
+            'feed_url' => '',
             'search' => '',
             'exclude_keywords' => ''
         ];
