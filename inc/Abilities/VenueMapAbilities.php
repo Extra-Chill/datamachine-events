@@ -12,6 +12,7 @@
 namespace DataMachineEvents\Abilities;
 
 use DataMachineEvents\Blocks\Calendar\Geo_Query;
+use DataMachineEvents\Core\Event_Post_Type;
 use DataMachineEvents\Core\Venue_Taxonomy;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -288,7 +289,7 @@ class VenueMapAbilities {
 	 */
 	private function getVenueIdsForTaxonomyTerm( string $taxonomy, int $term_id ): array {
 		$posts = get_posts( array(
-			'post_type'      => 'datamachine_event',
+			'post_type'      => Event_Post_Type::POST_TYPE,
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 			'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
