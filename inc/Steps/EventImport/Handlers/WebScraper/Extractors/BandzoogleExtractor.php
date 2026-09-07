@@ -66,9 +66,28 @@ class BandzoogleExtractor extends BaseExtractor {
 	 * @since 0.57.1
 	 */
 	private const NON_US_COUNTRY_TOKENS = array(
-		'SWE', 'NOR', 'DEN', 'FIN', 'GBR', 'UK', 'IRL', 'FRA', 'DEU',
-		'NLD', 'BEL', 'ESP', 'ITA', 'PRT', 'AUT', 'CHE', 'POL', 'CAN',
-		'MEX', 'AUS', 'NZL', 'JPN',
+		'SWE',
+		'NOR',
+		'DEN',
+		'FIN',
+		'GBR',
+		'UK',
+		'IRL',
+		'FRA',
+		'DEU',
+		'NLD',
+		'BEL',
+		'ESP',
+		'ITA',
+		'PRT',
+		'AUT',
+		'CHE',
+		'POL',
+		'CAN',
+		'MEX',
+		'AUS',
+		'NZL',
+		'JPN',
 	);
 
 	/**
@@ -462,9 +481,9 @@ class BandzoogleExtractor extends BaseExtractor {
 			return $out;
 		}
 
-		$name  = $segments[0];
-		$rest  = implode( ', ', array_slice( $segments, 1 ) );
-		$last  = $segments[ count( $segments ) - 1 ];
+		$name = $segments[0];
+		$rest = implode( ', ', array_slice( $segments, 1 ) );
+		$last = $segments[ count( $segments ) - 1 ];
 
 		$csz    = PageVenueExtractor::extractCityStateZip( $rest );
 		$street = PageVenueExtractor::extractStreetAddress( $rest );

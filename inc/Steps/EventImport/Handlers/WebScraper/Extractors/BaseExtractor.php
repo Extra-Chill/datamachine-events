@@ -277,8 +277,8 @@ abstract class BaseExtractor implements ExtractorInterface {
 	 * @return string Date in Y-m-d format, or empty string on failure.
 	 */
 	protected function inferDateFromMonthDay( string $month, string $day, ?\DateTimeImmutable $now = null ): string {
-		$now  = $now ?? new \DateTimeImmutable( 'now' );
-		$year = (int) $now->format( 'Y' );
+		$now      = $now ?? new \DateTimeImmutable( 'now' );
+		$year     = (int) $now->format( 'Y' );
 		$date_str = "{$month} {$day} {$year}";
 
 		try {
