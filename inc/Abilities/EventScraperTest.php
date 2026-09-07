@@ -500,7 +500,7 @@ class EventScraperTest {
 			array_filter(
 				$logs,
 				static function ( array $entry ): bool {
-					return $entry['level'] === 'warning';
+					return 'warning' === $entry['level'];
 				}
 			)
 		);
