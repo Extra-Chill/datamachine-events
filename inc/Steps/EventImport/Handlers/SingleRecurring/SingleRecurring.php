@@ -159,7 +159,7 @@ class SingleRecurring extends EventImportHandler {
 	 * @return \DateTime Next occurrence date
 	 */
 	protected function calculateNextOccurrence( int $target_day, string $start_time = '', ?\DateTimeInterface $now = null ): \DateTime {
-		$today = null === $now
+		$today       = null === $now
 			? new \DateTime( 'today', wp_timezone() )
 			: \DateTime::createFromInterface( $now )->setTime( 0, 0, 0 );
 		$current_day = (int) $today->format( 'w' );
