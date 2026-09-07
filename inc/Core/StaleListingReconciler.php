@@ -210,7 +210,7 @@ class StaleListingReconciler {
 		$handler = new UniversalWebScraper();
 		$results = $handler->get_fetch_data( 'direct', $config, null );
 
-		if ( empty( $results ) || ! is_array( $results ) ) {
+		if ( empty( $results ) ) {
 			return new \WP_Error(
 				'stale_listings_fetch_failed',
 				'Source fetch returned no results; refusing to reconcile against an empty extraction.'
@@ -220,10 +220,6 @@ class StaleListingReconciler {
 		$events = array();
 
 		foreach ( $results as $packet ) {
-			if ( ! is_object( $packet ) || ! method_exists( $packet, 'addTo' ) ) {
-				continue;
-			}
-
 			$entries = $packet->addTo( array() );
 
 			foreach ( $entries as $entry ) {
@@ -519,7 +515,9 @@ class StaleListingReconciler {
 	 */
 	private function buildSourceSlots( array $source_events, int $days_ahead ): array {
 		$today = substr( current_time( 'mysql' ), 0, 10 );
-		$limit = gmdate( 'Y-m-d', strtotime( $today . ' +' . max( 0, $days_ahead ) . ' days' ) );
+		$limit = ( new \DateTimeImmutable( $today ) )
+			->modify( '+' . max( 0, $days_ahead ) . ' days' )
+			->format( 'Y-m-d' );
 
 		$upcoming = array();
 		$by_date  = array();
