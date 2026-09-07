@@ -847,7 +847,7 @@ class UniversalWebScraper extends EventImportHandler {
 				'debug',
 				'Universal Web Scraper: Matched event section selector',
 				array(
-					'selector' => $event_section['selector'] ?? '',
+					'selector' => $event_section['selector'],
 					'url'      => $url,
 				)
 			);
