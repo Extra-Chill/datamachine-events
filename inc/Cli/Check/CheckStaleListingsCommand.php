@@ -26,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CheckStaleListingsCommand {
 
+	use EventQueryTrait;
+
 	private const MAX_REVIEWED_CANDIDATES = 100;
 
 	/**
@@ -74,7 +76,6 @@ class CheckStaleListingsCommand {
 		$dry_run      = ! isset( $assoc_args['apply'] ) || isset( $assoc_args['dry-run'] );
 		$skip_confirm = isset( $assoc_args['yes'] );
 		$reviewed     = $this->parse_reviewed_candidate_ids( (string) ( $assoc_args['reviewed'] ?? '' ) );
-
 		if ( $flow_id <= 0 ) {
 			\WP_CLI::error( '--flow with a positive flow ID is required.' );
 			return;
@@ -142,7 +143,7 @@ class CheckStaleListingsCommand {
 		\WP_CLI::log( '' );
 
 		if ( ! $dry_run ) {
-			$selection = $this->select_reviewed_candidates( $candidates, $reviewed );
+			$selection = $this->select_reviewed_actions( $candidates, $reviewed, 'stale_listing_review' );
 			if ( is_wp_error( $selection ) ) {
 				\WP_CLI::error( $selection->get_error_message() );
 				return;
@@ -180,38 +181,5 @@ class CheckStaleListingsCommand {
 				StaleListingReconciler::RETIRE_REASON_SOURCE_UNLISTED
 			)
 		);
-	}
-
-	/**
-	 * Parse a comma-separated reviewed candidate ID list.
-	 *
-	 * @param string $value Raw --reviewed value.
-	 * @return string[] Unique trimmed candidate IDs.
-	 */
-	private function parse_reviewed_candidate_ids( string $value ): array {
-		$ids = array_filter( array_map( 'trim', explode( ',', $value ) ) );
-
-		return array_values( array_unique( $ids ) );
-	}
-
-	/**
-	 * Restrict candidates to the reviewed IDs, failing closed on unknown IDs.
-	 *
-	 * @param array    $candidates Candidate rows from the reconciler.
-	 * @param string[] $reviewed   Reviewed candidate IDs.
-	 * @return array|\WP_Error Reviewed candidates or error.
-	 */
-	private function select_reviewed_candidates( array $candidates, array $reviewed ) {
-		$by_id   = array_column( $candidates, null, 'candidate_id' );
-		$missing = array_diff( $reviewed, array_keys( $by_id ) );
-
-		if ( ! empty( $missing ) ) {
-			return new \WP_Error(
-				'stale_listing_review',
-				'Reviewed candidate IDs are stale or outside the requested scope; no changes made: ' . implode( ', ', $missing )
-			);
-		}
-
-		return array_values( array_intersect_key( $by_id, array_flip( $reviewed ) ) );
 	}
 }
