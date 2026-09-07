@@ -367,7 +367,7 @@ class BandzoogleExtractor extends BaseExtractor {
 				$class = $tm[1];
 				$inner = $tm[2];
 
-				$is_start = ! $start_set && ( false !== strpos( $class, 'from' ) || ! $start_set );
+				$is_start = ! $start_set;
 				$is_end   = $start_set && false !== strpos( $class, 'to' );
 
 				$parsed = $this->parseTimeBlock( $inner, $calendar_year );

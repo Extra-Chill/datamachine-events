@@ -26,10 +26,6 @@ class UniversalWebScraperTestCommand {
 	 * @param array $assoc_args Named arguments.
 	 */
 	public function __invoke( array $args, array $assoc_args ): void {
-		if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
-			return;
-		}
-
 		$target_url = (string) ( $assoc_args['target_url'] ?? '' );
 		$target_url = trim( $target_url );
 

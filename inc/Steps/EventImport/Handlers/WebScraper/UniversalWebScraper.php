@@ -907,7 +907,7 @@ class UniversalWebScraper extends EventImportHandler {
 				'debug',
 				'Universal Web Scraper: Matched event section selector',
 				array(
-					'selector' => $event_section['selector'] ?? '',
+					'selector' => $event_section['selector'],
 					'url'      => $url,
 				)
 			);
@@ -1014,9 +1014,12 @@ class UniversalWebScraper extends EventImportHandler {
 		foreach ( $queries as $query ) {
 			$nodes = $xpath->query( $query );
 			if ( false !== $nodes && $nodes->length > 0 ) {
-				$text = trim( $nodes->item( 0 )->textContent );
-				if ( ! empty( $text ) ) {
-					return $text;
+				$first = $nodes->item( 0 );
+				if ( $first instanceof \DOMElement ) {
+					$text = trim( $first->textContent );
+					if ( ! empty( $text ) ) {
+						return $text;
+					}
 				}
 			}
 		}

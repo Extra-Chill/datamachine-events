@@ -323,7 +323,7 @@ class EventScraperTest {
 				array_filter(
 					$logs,
 					static function ( array $entry ): bool {
-						return in_array( $entry['level'] ?? '', array( 'warning', 'error' ), true );
+						return in_array( $entry['level'], array( 'warning', 'error' ), true );
 					}
 				)
 			);
@@ -446,7 +446,7 @@ class EventScraperTest {
 		$venue_state = (string) ( $event['venueState'] ?? '' );
 		$venue_zip   = (string) ( $event['venueZip'] ?? '' );
 
-		if ( is_array( $payload ) && isset( $payload['venue_metadata'] ) && is_array( $payload['venue_metadata'] ) ) {
+		if ( isset( $payload['venue_metadata'] ) && is_array( $payload['venue_metadata'] ) ) {
 			$venue_meta  = $payload['venue_metadata'];
 			$venue_addr  = '' !== $venue_addr ? $venue_addr : (string) ( $venue_meta['venueAddress'] ?? '' );
 			$venue_city  = '' !== $venue_city ? $venue_city : (string) ( $venue_meta['venueCity'] ?? '' );
@@ -500,7 +500,7 @@ class EventScraperTest {
 			array_filter(
 				$logs,
 				static function ( array $entry ): bool {
-					return ( $entry['level'] ?? '' ) === 'warning';
+					return $entry['level'] === 'warning';
 				}
 			)
 		);
@@ -523,10 +523,6 @@ class EventScraperTest {
 			'warnings'        => $warnings,
 			'logs'            => array_slice( $logs, -20 ),
 		);
-	}
-
-	private function buildErrorResponse( string $message ): \WP_Error {
-		return new \WP_Error( 'test_error', $message, array( 'status' => 400 ) );
 	}
 
 	/**
