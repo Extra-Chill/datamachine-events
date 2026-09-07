@@ -19,35 +19,35 @@ class VenueParameterProvider {
 	use DynamicToolParametersTrait;
 
 	private const TOOL_PARAMETERS = array(
-		'venue'            => array(
+		'venue'             => array(
 			'type'        => 'string',
 			'description' => 'Venue name where the event takes place',
 		),
-		'venueAddress'     => array(
+		'venueAddress'      => array(
 			'type'        => 'string',
 			'description' => 'Street address of the venue',
 		),
-		'venueCity'        => array(
+		'venueCity'         => array(
 			'type'        => 'string',
 			'description' => 'City where the venue is located',
 		),
-		'venueState'       => array(
+		'venueState'        => array(
 			'type'        => 'string',
 			'description' => 'State/province where the venue is located',
 		),
-		'venueZip'         => array(
+		'venueZip'          => array(
 			'type'        => 'string',
 			'description' => 'Postal/zip code of the venue',
 		),
-		'venueCountry'     => array(
+		'venueCountry'      => array(
 			'type'        => 'string',
 			'description' => 'Country where the venue is located',
 		),
-		'venuePhone'       => array(
+		'venuePhone'        => array(
 			'type'        => 'string',
 			'description' => 'Phone number of the venue',
 		),
-		'venueWebsite'     => array(
+		'venueWebsite'      => array(
 			'type'        => 'string',
 			'description' => 'Official website URL of the venue',
 		),
@@ -55,33 +55,33 @@ class VenueParameterProvider {
 			'type'        => 'string',
 			'description' => 'Public ticketing destination URL for the venue',
 		),
-		'venueCoordinates' => array(
+		'venueCoordinates'  => array(
 			'type'        => 'string',
 			'description' => 'GPS coordinates (latitude,longitude format)',
 		),
-		'venueCapacity'    => array(
+		'venueCapacity'     => array(
 			'type'        => 'string',
 			'description' => 'Maximum venue capacity',
 		),
-		'venueTimezone'    => array(
+		'venueTimezone'     => array(
 			'type'        => 'string',
 			'description' => 'IANA timezone identifier (e.g., America/Chicago, America/Los_Angeles)',
 		),
 	);
 
 	private const PARAMETER_TO_META_MAP = array(
-		'venue'            => 'name',
-		'venueAddress'     => 'address',
-		'venueCity'        => 'city',
-		'venueState'       => 'state',
-		'venueZip'         => 'zip',
-		'venueCountry'     => 'country',
-		'venuePhone'       => 'phone',
-		'venueWebsite'     => 'website',
+		'venue'             => 'name',
+		'venueAddress'      => 'address',
+		'venueCity'         => 'city',
+		'venueState'        => 'state',
+		'venueZip'          => 'zip',
+		'venueCountry'      => 'country',
+		'venuePhone'        => 'phone',
+		'venueWebsite'      => 'website',
 		'venueTicketingUrl' => 'ticketing_url',
-		'venueCoordinates' => 'coordinates',
-		'venueCapacity'    => 'capacity',
-		'venueTimezone'    => 'timezone',
+		'venueCoordinates'  => 'coordinates',
+		'venueCapacity'     => 'capacity',
+		'venueTimezone'     => 'timezone',
 	);
 
 	/**
