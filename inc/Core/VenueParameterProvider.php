@@ -117,10 +117,34 @@ class VenueParameterProvider {
 	 * @return array Canonical fragment, or empty array when venue is pre-configured.
 	 */
 	public static function getToolParameters( array $handler_config, array $engine_data = array() ): array {
-		if ( self::hasVenueData( $handler_config, $engine_data ) ) {
+		// A venue pinned in handler config is fully known; the model never
+		// needs venue parameters. A scraper that found only a venue *name* is
+		// not the same thing: the model must still be able to supply the
+		// city/country/timezone the page lacked, otherwise the venue is created
+		// blank and can never resolve a timezone (#782). filterByEngineData()
+		// already drops just the keys the scraper did populate.
+		if ( self::isVenuePinnedByConfig( $handler_config ) ) {
 			return array();
 		}
 		return static::filterByEngineData( array( 'properties' => self::TOOL_PARAMETERS ), $engine_data );
+	}
+
+	/**
+	 * Whether the flow's handler config fixes the venue to a known term.
+	 *
+	 * @param array $handler_config Handler configuration.
+	 * @return bool True when a venue term is pre-selected in config.
+	 */
+	public static function isVenuePinnedByConfig( array $handler_config ): bool {
+		if ( ! empty( $handler_config['universal_web_scraper']['venue'] ) ) {
+			return true;
+		}
+
+		if ( ! empty( $handler_config['venue'] ) && is_numeric( $handler_config['venue'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -135,15 +159,7 @@ class VenueParameterProvider {
 			return true;
 		}
 
-		if ( ! empty( $handler_config['universal_web_scraper']['venue'] ) ) {
-			return true;
-		}
-
-		if ( ! empty( $handler_config['venue'] ) && is_numeric( $handler_config['venue'] ) ) {
-			return true;
-		}
-
-		return false;
+		return self::isVenuePinnedByConfig( $handler_config );
 	}
 
 	/**
