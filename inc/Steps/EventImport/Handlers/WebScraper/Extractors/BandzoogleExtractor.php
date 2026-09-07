@@ -174,6 +174,20 @@ class BandzoogleExtractor extends BaseExtractor {
 	}
 
 	/**
+	 * Fields this extractor wants second-hop detail-page enrichment for.
+	 *
+	 * Bandzoogle artist tour pages publish no start time on the listing or
+	 * the Bandzoogle event-detail page; the time lives one hop further on
+	 * the ticket/venue page (#776). The enricher stage consumes this
+	 * declaration and only follows URLs for events missing these fields.
+	 *
+	 * @return string[]
+	 */
+	public function needsDetailEnrichment(): array {
+		return array( 'startTime' );
+	}
+
+	/**
 	 * Parse the calendar header for a 4-digit year.
 	 *
 	 * Bandzoogle renders the current month as:

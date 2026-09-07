@@ -51,6 +51,34 @@ class UniversalWebScraperTestCommand {
 		return $tester->test( $target_url );
 	}
 
+	/**
+	 * Print the second-hop enrichment summary line.
+	 *
+	 * Format: "Followed: 2 detail pages, filled: startTime×2". Emitted when
+	 * the enricher stage followed at least one page so the capability is
+	 * visible from the CLI.
+	 *
+	 * @param array $extraction_info Extraction info from the ability result.
+	 */
+	private function outputEnrichmentLine( array $extraction_info ): void {
+		$enrichment = $extraction_info['enrichment'] ?? null;
+
+		if ( ! is_array( $enrichment ) || ( (int) ( $enrichment['followed'] ?? 0 ) ) <= 0 ) {
+			return;
+		}
+
+		$filled_parts = array();
+		foreach ( ( $enrichment['filled'] ?? array() ) as $field => $count ) {
+			$filled_parts[] = $field . '×' . (int) $count;
+		}
+
+		\WP_CLI::log(
+			'Followed: ' . (int) $enrichment['followed']
+			. ' detail pages, filled: '
+			. ( ! empty( $filled_parts ) ? implode( ', ', $filled_parts ) : 'nothing' )
+		);
+	}
+
 	private function outputResult( array $result ): void {
 		\WP_CLI::log( 'Target URL: ' . $result['target_url'] );
 
@@ -88,6 +116,8 @@ class UniversalWebScraperTestCommand {
 		if ( isset( $extraction_info['extraction_method'] ) && '' !== $extraction_info['extraction_method'] ) {
 			\WP_CLI::log( 'Extraction method: ' . $extraction_info['extraction_method'] );
 		}
+
+		$this->outputEnrichmentLine( $extraction_info );
 
 		$payload_type = $extraction_info['payload_type'] ?? '';
 
