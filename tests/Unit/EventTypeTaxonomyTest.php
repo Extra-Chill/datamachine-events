@@ -87,7 +87,7 @@ class EventTypeTaxonomyTest extends WP_UnitTestCase {
 		$this->assertFalse( $taxonomy->hierarchical );
 		$this->assertTrue( $taxonomy->show_in_rest );
 		$this->assertContains(
-			Event_Post_Type::POST_TYPE,
+			Event_Type_Taxonomy::TAXONOMY,
 			get_object_taxonomies( Event_Post_Type::POST_TYPE )
 		);
 	}
