@@ -149,30 +149,49 @@ trait VenueFieldsTrait {
 	/**
 	 * Sanitize venue fields from raw settings input.
 	 *
+	 * Only keys present in $raw_settings are included in the returned array.
+	 * Handler config patches are sparse (see Data Machine's
+	 * prepareHandlerConfigPatch), so absent keys must not be defaulted to
+	 * empty strings here — save_venue_on_settings_save() would otherwise
+	 * diff those empties against stored venue meta and wipe it. Full-object
+	 * input (admin settings form) contains every key and is unaffected.
+	 *
 	 * @param array $raw_settings Raw settings input
 	 * @return array Sanitized venue field values
 	 */
 	protected static function sanitize_venue_fields( array $raw_settings ): array {
-		return array(
-			'venue'          => sanitize_text_field( $raw_settings['venue'] ?? '' ),
-			'venue_name'     => sanitize_text_field( $raw_settings['venue_name'] ?? '' ),
-			'venue_address'  => sanitize_text_field( $raw_settings['venue_address'] ?? '' ),
-			'venue_city'     => sanitize_text_field( $raw_settings['venue_city'] ?? '' ),
-			'venue_state'    => sanitize_text_field( $raw_settings['venue_state'] ?? '' ),
-			'venue_zip'      => sanitize_text_field( $raw_settings['venue_zip'] ?? '' ),
-			'venue_country'  => sanitize_text_field( $raw_settings['venue_country'] ?? '' ),
-			'venue_phone'    => sanitize_text_field( $raw_settings['venue_phone'] ?? '' ),
-			'venue_website'  => esc_url_raw( $raw_settings['venue_website'] ?? '' ),
-			'venue_ticketing_url' => esc_url_raw( $raw_settings['venue_ticketing_url'] ?? '' ),
-			'venue_capacity' => ! empty( $raw_settings['venue_capacity'] ) ? absint( $raw_settings['venue_capacity'] ) : '',
-		);
+		$sanitized = array();
+
+		foreach ( self::get_venue_field_keys() as $key ) {
+			if ( ! array_key_exists( $key, $raw_settings ) ) {
+				continue;
+			}
+
+			switch ( $key ) {
+				case 'venue_website':
+				case 'venue_ticketing_url':
+					$sanitized[ $key ] = esc_url_raw( $raw_settings[ $key ] );
+					break;
+				case 'venue_capacity':
+					$sanitized[ $key ] = ! empty( $raw_settings[ $key ] ) ? absint( $raw_settings[ $key ] ) : '';
+					break;
+				default:
+					$sanitized[ $key ] = sanitize_text_field( $raw_settings[ $key ] );
+			}
+		}
+
+		return $sanitized;
 	}
 
 	/**
 	 * Process venue data on settings save.
 	 *
 	 * Creates new venue term if venue is empty and venue_name is provided.
-	 * Updates existing venue term meta if venue has a term_id.
+	 * Updates existing venue term meta if venue has a term_id, writing only
+	 * the venue fields actually present in $settings. Sparse handler-config
+	 * patches that only touch e.g. `venue` (or non-venue keys) therefore
+	 * leave stored venue meta untouched instead of overwriting it with
+	 * sanitizer defaults.
 	 * Stores both term_id AND venue fields in handler_config for dual storage.
 	 *
 	 * @param array $settings Sanitized settings array (modified in place)
@@ -181,17 +200,35 @@ trait VenueFieldsTrait {
 	protected static function save_venue_on_settings_save( array $settings ): array {
 		$venue_term_id = $settings['venue'] ?? '';
 
-		$venue_data = array(
-			'address'  => $settings['venue_address'] ?? '',
-			'city'     => $settings['venue_city'] ?? '',
-			'state'    => $settings['venue_state'] ?? '',
-			'zip'      => $settings['venue_zip'] ?? '',
-			'country'  => $settings['venue_country'] ?? '',
-			'phone'    => $settings['venue_phone'] ?? '',
-			'website'  => $settings['venue_website'] ?? '',
-			'ticketing_url' => $settings['venue_ticketing_url'] ?? '',
-			'capacity' => $settings['venue_capacity'] ?? '',
-		);
+		$venue_data = array();
+
+		if ( array_key_exists( 'venue_address', $settings ) ) {
+			$venue_data['address'] = $settings['venue_address'];
+		}
+		if ( array_key_exists( 'venue_city', $settings ) ) {
+			$venue_data['city'] = $settings['venue_city'];
+		}
+		if ( array_key_exists( 'venue_state', $settings ) ) {
+			$venue_data['state'] = $settings['venue_state'];
+		}
+		if ( array_key_exists( 'venue_zip', $settings ) ) {
+			$venue_data['zip'] = $settings['venue_zip'];
+		}
+		if ( array_key_exists( 'venue_country', $settings ) ) {
+			$venue_data['country'] = $settings['venue_country'];
+		}
+		if ( array_key_exists( 'venue_phone', $settings ) ) {
+			$venue_data['phone'] = $settings['venue_phone'];
+		}
+		if ( array_key_exists( 'venue_website', $settings ) ) {
+			$venue_data['website'] = $settings['venue_website'];
+		}
+		if ( array_key_exists( 'venue_ticketing_url', $settings ) ) {
+			$venue_data['ticketing_url'] = $settings['venue_ticketing_url'];
+		}
+		if ( array_key_exists( 'venue_capacity', $settings ) ) {
+			$venue_data['capacity'] = $settings['venue_capacity'];
+		}
 
 		if ( empty( $venue_term_id ) ) {
 			$venue_name = $settings['venue_name'] ?? '';
@@ -200,7 +237,7 @@ trait VenueFieldsTrait {
 				$result        = Venue_Taxonomy::find_or_create_venue( $venue_name, $venue_data );
 				$venue_term_id = $result['term_id'] ?? '';
 			}
-		} else {
+		} elseif ( ! empty( $venue_data ) ) {
 			$original_data  = Venue_Taxonomy::get_venue_data( $venue_term_id );
 			$changed_fields = array();
 
@@ -216,7 +253,9 @@ trait VenueFieldsTrait {
 			}
 		}
 
-		$settings['venue'] = $venue_term_id;
+		if ( array_key_exists( 'venue', $settings ) || ! empty( $venue_term_id ) ) {
+			$settings['venue'] = $venue_term_id;
+		}
 
 		return $settings;
 	}
