@@ -21,40 +21,40 @@ class VenueTimezoneResolverTest extends WP_UnitTestCase {
 	public function resolution_cases(): array {
 		return array(
 			// Single-zone US states are exact regardless of coordinates.
-			'SC by code'                => array( '32.6557789,-79.9402464', 'US', 'SC', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
-			'SC by full name'           => array( '', 'US', 'South Carolina', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
-			'SC infers US country'      => array( '', '', 'SC', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
-			'US by full country name'   => array( '', 'United States', 'GA', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
-			'AZ has no DST split'       => array( '33.4484,-112.0740', 'US', 'AZ', 'America/Phoenix', VenueTimezoneResolver::SOURCE_US_STATE ),
+			'SC by code'              => array( '32.6557789,-79.9402464', 'US', 'SC', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
+			'SC by full name'         => array( '', 'US', 'South Carolina', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
+			'SC infers US country'    => array( '', '', 'SC', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
+			'US by full country name' => array( '', 'United States', 'GA', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE ),
+			'AZ has no DST split'     => array( '33.4484,-112.0740', 'US', 'AZ', 'America/Phoenix', VenueTimezoneResolver::SOURCE_US_STATE ),
 
 			// Split states resolve by coordinate boundary.
-			'Austin TX'                 => array( '30.2672,-97.7431', 'US', 'TX', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'El Paso TX'                => array( '31.7619,-106.4850', 'US', 'TX', 'America/Denver', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Miami FL'                  => array( '25.7617,-80.1918', 'US', 'FL', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Pensacola FL'              => array( '30.4213,-87.2169', 'US', 'FL', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Nashville TN'              => array( '36.1627,-86.7816', 'US', 'TN', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Knoxville TN'              => array( '35.9606,-83.9207', 'US', 'TN', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Louisville KY'             => array( '38.2527,-85.7585', 'US', 'KY', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Gary IN'                   => array( '41.5934,-87.3464', 'US', 'IN', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Indianapolis IN'           => array( '39.7684,-86.1581', 'US', 'IN', 'America/Indiana/Indianapolis', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
-			'Split state, no coords'    => array( '', 'US', 'TX', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Austin TX'               => array( '30.2672,-97.7431', 'US', 'TX', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'El Paso TX'              => array( '31.7619,-106.4850', 'US', 'TX', 'America/Denver', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Miami FL'                => array( '25.7617,-80.1918', 'US', 'FL', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Pensacola FL'            => array( '30.4213,-87.2169', 'US', 'FL', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Nashville TN'            => array( '36.1627,-86.7816', 'US', 'TN', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Knoxville TN'            => array( '35.9606,-83.9207', 'US', 'TN', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Louisville KY'           => array( '38.2527,-85.7585', 'US', 'KY', 'America/New_York', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Gary IN'                 => array( '41.5934,-87.3464', 'US', 'IN', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Indianapolis IN'         => array( '39.7684,-86.1581', 'US', 'IN', 'America/Indiana/Indianapolis', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
+			'Split state, no coords'  => array( '', 'US', 'TX', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_STATE_REGION ),
 
 			// US with coordinates but no usable state.
-			'US coords only, Chicago'   => array( '41.8781,-87.6298', 'US', '', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_LONGITUDE ),
-			'US coords only, Denver'    => array( '39.7392,-104.9903', 'US', '', 'America/Denver', VenueTimezoneResolver::SOURCE_US_LONGITUDE ),
+			'US coords only, Chicago' => array( '41.8781,-87.6298', 'US', '', 'America/Chicago', VenueTimezoneResolver::SOURCE_US_LONGITUDE ),
+			'US coords only, Denver'  => array( '39.7392,-104.9903', 'US', '', 'America/Denver', VenueTimezoneResolver::SOURCE_US_LONGITUDE ),
 
 			// Single-zone countries are exact.
-			'London'                    => array( '51.5074,-0.1278', 'GB', '', 'Europe/London', VenueTimezoneResolver::SOURCE_COUNTRY ),
-			'UK alias'                  => array( '', 'United Kingdom', '', 'Europe/London', VenueTimezoneResolver::SOURCE_COUNTRY ),
-			'Tokyo'                     => array( '35.6762,139.6503', 'JP', '', 'Asia/Tokyo', VenueTimezoneResolver::SOURCE_COUNTRY ),
+			'London'                  => array( '51.5074,-0.1278', 'GB', '', 'Europe/London', VenueTimezoneResolver::SOURCE_COUNTRY ),
+			'UK alias'                => array( '', 'United Kingdom', '', 'Europe/London', VenueTimezoneResolver::SOURCE_COUNTRY ),
+			'Tokyo'                   => array( '35.6762,139.6503', 'JP', '', 'Asia/Tokyo', VenueTimezoneResolver::SOURCE_COUNTRY ),
 
 			// Multi-zone non-US countries use nearest zone.
-			'Toronto'                   => array( '43.6532,-79.3832', 'CA', 'ON', 'America/Toronto', VenueTimezoneResolver::SOURCE_NEAREST ),
-			'Vancouver'                 => array( '49.2827,-123.1207', 'CA', 'BC', 'America/Vancouver', VenueTimezoneResolver::SOURCE_NEAREST ),
-			'Sydney'                    => array( '-33.8688,151.2093', 'AU', '', 'Australia/Sydney', VenueTimezoneResolver::SOURCE_NEAREST ),
+			'Toronto'                 => array( '43.6532,-79.3832', 'CA', 'ON', 'America/Toronto', VenueTimezoneResolver::SOURCE_NEAREST ),
+			'Vancouver'               => array( '49.2827,-123.1207', 'CA', 'BC', 'America/Vancouver', VenueTimezoneResolver::SOURCE_NEAREST ),
+			'Sydney'                  => array( '-33.8688,151.2093', 'AU', '', 'Australia/Sydney', VenueTimezoneResolver::SOURCE_NEAREST ),
 
 			// No country at all falls back to global nearest.
-			'Paris no country'          => array( '48.8566,2.3522', '', '', 'Europe/Paris', VenueTimezoneResolver::SOURCE_NEAREST_GLOBAL ),
+			'Paris no country'        => array( '48.8566,2.3522', '', '', 'Europe/Paris', VenueTimezoneResolver::SOURCE_NEAREST_GLOBAL ),
 		);
 	}
 

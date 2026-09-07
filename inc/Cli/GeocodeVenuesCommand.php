@@ -82,12 +82,18 @@ class GeocodeVenuesCommand {
 		$abilities = new GeocodingAbilities();
 		$result    = $abilities->executeGeocodeVenues( $input );
 
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+			return;
+		}
+
 		if ( isset( $result['error'] ) ) {
-			\WP_CLI::error( $result['error'] );
+			\WP_CLI::error( (string) $result['error'] );
+			return;
 		}
 
 		if ( 'json' === $format ) {
-			\WP_CLI::log( wp_json_encode( $result, JSON_PRETTY_PRINT ) );
+			\WP_CLI::log( (string) wp_json_encode( $result, JSON_PRETTY_PRINT ) );
 			return;
 		}
 

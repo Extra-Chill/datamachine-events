@@ -24,27 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class GeocodingAbilities {
 
-	/**
-	 * Transient cache TTL for geocoded addresses (30 days).
-	 *
-	 * @deprecated Use NominatimClient::CACHE_TTL.
-	 */
-	private const CACHE_TTL = NominatimClient::CACHE_TTL;
-
-	/**
-	 * Transient prefix for cached geocoding results.
-	 *
-	 * @deprecated Use NominatimClient::CACHE_PREFIX.
-	 */
-	private const CACHE_PREFIX = NominatimClient::CACHE_PREFIX;
-
-	/**
-	 * Rate limit: seconds between Nominatim requests.
-	 *
-	 * @deprecated Use NominatimClient::RATE_LIMIT_SECONDS.
-	 */
-	private const RATE_LIMIT_SECONDS = NominatimClient::RATE_LIMIT_SECONDS;
-
 	private static bool $registered = false;
 
 	public function __construct() {
@@ -235,19 +214,19 @@ class GeocodingAbilities {
 				'input_schema'        => array(
 					'type'       => 'object',
 					'properties' => array(
-						'venue_id' => array(
+						'venue_id'       => array(
 							'type'        => 'integer',
 							'description' => 'Geocode a specific venue by term ID (optional, omit for all)',
 						),
-						'force'    => array(
+						'force'          => array(
 							'type'        => 'boolean',
 							'description' => 'Re-geocode even if coordinates already exist (default: false)',
 						),
-						'dry_run'  => array(
+						'dry_run'        => array(
 							'type'        => 'boolean',
 							'description' => 'Show what would be geocoded without doing it (default: false)',
 						),
-						'limit'    => array(
+						'limit'          => array(
 							'type'        => 'integer',
 							'description' => 'Max venues to process in one batch (default: 50)',
 						),

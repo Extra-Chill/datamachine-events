@@ -374,9 +374,7 @@ class VenueTimezoneResolver {
 			return array();
 		}
 
-		$zones = \DateTimeZone::listIdentifiers( \DateTimeZone::PER_COUNTRY, strtoupper( $country_code ) );
-
-		return is_array( $zones ) ? array_values( $zones ) : array();
+		return \DateTimeZone::listIdentifiers( \DateTimeZone::PER_COUNTRY, strtoupper( $country_code ) );
 	}
 
 	/**
@@ -402,12 +400,8 @@ class VenueTimezoneResolver {
 				continue;
 			}
 
-			if ( ! is_array( $location ) || ! isset( $location['latitude'], $location['longitude'] ) ) {
-				continue;
-			}
-
-			// PHP reports 0,0 for zones without a known location (e.g. "UTC").
-			if ( 0.0 === (float) $location['latitude'] && 0.0 === (float) $location['longitude'] ) {
+			// PHP reports 0,0 (or false) for zones without a known location (e.g. "UTC").
+			if ( false === $location || ( 0.0 === (float) $location['latitude'] && 0.0 === (float) $location['longitude'] ) ) {
 				continue;
 			}
 
