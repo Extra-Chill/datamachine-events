@@ -81,7 +81,7 @@ class EventSchemaProvider {
 		'title'           => array(
 			'type'            => 'string',
 			'required'        => true,
-			'description'     => 'Event title. The original scraped title is in data packet metadata (original_title). Use it directly if clear and complete, or write a better title if the original is unclear, truncated, ALL CAPS, contains emojis, dates, or unnecessary formatting.',
+			'description'     => 'Event title: the public name of the show, which must identify who is performing. The original scraped title is in data packet metadata (original_title). Use it directly only when it names the performer(s) or the event (e.g. a festival) and is clean. Rewrite it when it is unclear, truncated, ALL CAPS, or contains emojis, dates, or formatting noise. Never use a bare city, venue name, date, or the pre-selected artist\'s bare name as the title: artist tour pages commonly emit those, and the correct title is then composed, e.g. "{Artist} at {Venue}".',
 			'schema_property' => 'name',
 		),
 		'startDate'       => array(
