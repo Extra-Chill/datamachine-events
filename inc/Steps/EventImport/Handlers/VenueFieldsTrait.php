@@ -45,63 +45,63 @@ trait VenueFieldsTrait {
 		}
 
 		return array(
-			'venue'          => array(
+			'venue'               => array(
 				'type'        => 'select',
 				'label'       => __( 'Venue', 'data-machine-events' ),
 				'description' => __( 'Select an existing venue or choose "Create New Venue" to add a new one.', 'data-machine-events' ),
 				'options'     => $venue_options,
 				'required'    => false,
 			),
-			'venue_name'     => array(
+			'venue_name'          => array(
 				'type'        => 'text',
 				'label'       => __( 'Venue Name', 'data-machine-events' ),
 				'description' => __( 'Required when creating a new venue.', 'data-machine-events' ),
 				'placeholder' => __( 'The Royal American', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_address'  => array(
+			'venue_address'       => array(
 				'type'        => 'address-autocomplete',
 				'label'       => __( 'Venue Address', 'data-machine-events' ),
 				'description' => __( 'Start typing to search. Auto-fills city, state, zip, country.', 'data-machine-events' ),
 				'placeholder' => __( '970 Morrison Drive', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_city'     => array(
+			'venue_city'          => array(
 				'type'        => 'text',
 				'label'       => __( 'City', 'data-machine-events' ),
 				'description' => __( 'Auto-filled from address selection.', 'data-machine-events' ),
 				'placeholder' => __( 'Charleston', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_state'    => array(
+			'venue_state'         => array(
 				'type'        => 'text',
 				'label'       => __( 'State', 'data-machine-events' ),
 				'description' => __( 'Auto-filled from address selection.', 'data-machine-events' ),
 				'placeholder' => __( 'South Carolina', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_zip'      => array(
+			'venue_zip'           => array(
 				'type'        => 'text',
 				'label'       => __( 'ZIP Code', 'data-machine-events' ),
 				'description' => __( 'Auto-filled from address selection.', 'data-machine-events' ),
 				'placeholder' => __( '29403', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_country'  => array(
+			'venue_country'       => array(
 				'type'        => 'text',
 				'label'       => __( 'Country', 'data-machine-events' ),
 				'description' => __( 'Auto-filled from address selection. Two-letter country code.', 'data-machine-events' ),
 				'placeholder' => __( 'US', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_phone'    => array(
+			'venue_phone'         => array(
 				'type'        => 'text',
 				'label'       => __( 'Phone', 'data-machine-events' ),
 				'description' => __( 'Venue phone number.', 'data-machine-events' ),
 				'placeholder' => __( '(843) 817-6925', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_website'  => array(
+			'venue_website'       => array(
 				'type'        => 'url',
 				'label'       => __( 'Official Website', 'data-machine-events' ),
 				'description' => __( 'Official venue website URL.', 'data-machine-events' ),
@@ -115,7 +115,7 @@ trait VenueFieldsTrait {
 				'placeholder' => __( 'https://www.eventbrite.com/o/example', 'data-machine-events' ),
 				'required'    => false,
 			),
-			'venue_capacity' => array(
+			'venue_capacity'      => array(
 				'type'        => 'number',
 				'label'       => __( 'Capacity', 'data-machine-events' ),
 				'description' => __( 'Maximum venue capacity.', 'data-machine-events' ),
@@ -132,17 +132,17 @@ trait VenueFieldsTrait {
 	 */
 	protected static function get_venue_field_defaults(): array {
 		return array(
-			'venue'          => '',
-			'venue_name'     => '',
-			'venue_address'  => '',
-			'venue_city'     => '',
-			'venue_state'    => '',
-			'venue_zip'      => '',
-			'venue_country'  => '',
-			'venue_phone'    => '',
-			'venue_website'  => '',
+			'venue'               => '',
+			'venue_name'          => '',
+			'venue_address'       => '',
+			'venue_city'          => '',
+			'venue_state'         => '',
+			'venue_zip'           => '',
+			'venue_country'       => '',
+			'venue_phone'         => '',
+			'venue_website'       => '',
 			'venue_ticketing_url' => '',
-			'venue_capacity' => '',
+			'venue_capacity'      => '',
 		);
 	}
 
@@ -291,16 +291,16 @@ trait VenueFieldsTrait {
 	 */
 	protected static function map_venue_config_to_event_data( array $config ): array {
 		return array(
-			'venue'         => $config['venue_name'] ?? '',
-			'venueAddress'  => $config['venue_address'] ?? '',
-			'venueCity'     => $config['venue_city'] ?? '',
-			'venueState'    => $config['venue_state'] ?? '',
-			'venueZip'      => $config['venue_zip'] ?? '',
-			'venueCountry'  => $config['venue_country'] ?? '',
-			'venuePhone'    => $config['venue_phone'] ?? '',
-			'venueWebsite'  => $config['venue_website'] ?? '',
+			'venue'             => $config['venue_name'] ?? '',
+			'venueAddress'      => $config['venue_address'] ?? '',
+			'venueCity'         => $config['venue_city'] ?? '',
+			'venueState'        => $config['venue_state'] ?? '',
+			'venueZip'          => $config['venue_zip'] ?? '',
+			'venueCountry'      => $config['venue_country'] ?? '',
+			'venuePhone'        => $config['venue_phone'] ?? '',
+			'venueWebsite'      => $config['venue_website'] ?? '',
 			'venueTicketingUrl' => $config['venue_ticketing_url'] ?? '',
-			'venueCapacity' => $config['venue_capacity'] ?? '',
+			'venueCapacity'     => $config['venue_capacity'] ?? '',
 		);
 	}
 }
