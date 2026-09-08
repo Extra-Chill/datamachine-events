@@ -173,7 +173,7 @@ class StaleListingReconciler {
 				)
 			);
 
-			if ( 'matched' === ( $identity['match_status'] ?? '' ) && (int) ( $identity['term_id'] ?? 0 ) > 0 ) {
+			if ( 'matched' === $identity['match_status'] && (int) ( $identity['term_id'] ?? 0 ) > 0 ) {
 				$venue_term_id = (int) $identity['term_id'];
 			}
 		}
