@@ -158,6 +158,7 @@ final class CalendarRequest {
 		$this->format           = $format;
 		$this->month            = $month;
 		$this->scope_token      = $scope_token;
+		$this->venue_tier       = $venue_tier;
 	}
 
 	/**
