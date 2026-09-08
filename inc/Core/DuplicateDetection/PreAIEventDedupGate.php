@@ -119,7 +119,9 @@ class PreAIEventDedupGate {
 		// Event exists. Decide whether the packet is a changed revision that
 		// must still reach upsert.
 		$existing_post_id = (int) ( $match['match']['post_id'] ?? 0 );
-		$strategy         = $match['strategy'] ?? 'unknown';
+		// The guard above already verified `strategy` is `event_identity_index`,
+		// so the key is known to exist here.
+		$strategy = (string) $match['strategy'];
 
 		if ( $existing_post_id > 0 && self::isChangedRevision( $title, $startDate, $existing_post_id ) ) {
 			do_action(
