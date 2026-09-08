@@ -71,7 +71,7 @@ class Venue_Taxonomy {
 	 *
 	 * @var string[]
 	 */
-	private const STREET_TYPE_TOKENS = array( 'st', 'ave', 'blvd', 'dr', 'rd', 'ln', 'ct', 'hwy', 'pkwy', 'pl', 'cir' );
+	private const STREET_TYPE_TOKENS = array( 'st', 'ave', 'blvd', 'dr', 'rd', 'ln', 'ct', 'hwy', 'pkwy', 'pl', 'cir', 'way' );
 
 	/**
 	 * Bounded ordinal word map for address matching (#803).
@@ -79,16 +79,16 @@ class Venue_Taxonomy {
 	 * @var array<string,string>
 	 */
 	private const ORDINAL_ALIASES = array(
-		'first'  => '1st',
-		'second' => '2nd',
-		'third'  => '3rd',
-		'fourth' => '4th',
-		'fifth'  => '5th',
-		'sixth'  => '6th',
+		'first'   => '1st',
+		'second'  => '2nd',
+		'third'   => '3rd',
+		'fourth'  => '4th',
+		'fifth'   => '5th',
+		'sixth'   => '6th',
 		'seventh' => '7th',
-		'eighth' => '8th',
-		'ninth'  => '9th',
-		'tenth'  => '10th',
+		'eighth'  => '8th',
+		'ninth'   => '9th',
+		'tenth'   => '10th',
 	);
 
 	public static array $meta_fields = array(
@@ -774,6 +774,18 @@ class Venue_Taxonomy {
 					continue;
 				}
 
+				$incoming_normalized = self::normalize_address_for_matching( (string) $incoming );
+				$stored_normalized   = self::normalize_address_for_matching( (string) $stored );
+
+				// A less-specific subset of the stored address ("880 Island
+				// Park Dr" against "880 Island Park Dr, Charleston, SC
+				// 29492") is incomplete evidence, not a conflict (#798).
+				// Must short-circuit BEFORE the reduced-key comparison,
+				// which would flag the trailing city/state/zip tokens.
+				if ( self::normalized_address_is_subset( $incoming_normalized, $stored_normalized ) ) {
+					continue;
+				}
+
 				// Both sides carry a street: compare the reduced street identity
 				// key (#803). Directional, ordinal, and unit-suffix variants of
 				// the same house number + street name are not a conflict — the
@@ -786,19 +798,12 @@ class Venue_Taxonomy {
 					continue;
 				}
 
-				// Stored address carries no street component — fall through to
-				// the #798 subset/equality comparison below.
-			}
-
-			$incoming_normalized = 'address' === $field
-				? self::normalize_address_for_matching( (string) $incoming )
-				: self::normalize_geographic_value( (string) $incoming, $field );
-			$stored_normalized   = 'address' === $field
-				? self::normalize_address_for_matching( (string) $stored )
-				: self::normalize_geographic_value( (string) $stored, $field );
-
-			if ( 'address' === $field && self::normalized_address_is_subset( $incoming_normalized, $stored_normalized ) ) {
-				continue;
+				// Stored address carries no street component and the subset
+				// check did not pass — fall through to the strict equality
+				// comparison below.
+			} else {
+				$incoming_normalized = self::normalize_geographic_value( (string) $incoming, $field );
+				$stored_normalized   = self::normalize_geographic_value( (string) $stored, $field );
 			}
 
 			if ( $incoming_normalized !== $stored_normalized ) {
@@ -859,6 +864,9 @@ class Venue_Taxonomy {
 	 * The key is the house number plus street-name tokens with directionals
 	 * and street-type words removed, so "8504 S Congress Ave" and
 	 * "8504 South Congress Avenue" reduce to the same "8504 congress".
+	 * Mirroring the normalizer, a directional immediately followed by a
+	 * street-type word is a street NAME and is kept: "100 West Street"
+	 * reduces to "100 west", distinct from "100 W Street" ("100 w").
 	 * A differing key means a genuinely different street (or house number)
 	 * and remains a geographic conflict.
 	 *
@@ -872,17 +880,26 @@ class Venue_Taxonomy {
 			return '';
 		}
 
-		$directionals = array_values( array_unique( array_merge( self::DIRECTIONAL_ALIASES, array_keys( self::DIRECTIONAL_ALIASES ) ) ) );
-		$tokens       = preg_split( '/\s+/', $normalized ) ?: array();
+		$tokens = preg_split( '/\s+/', $normalized );
+		if ( ! is_array( $tokens ) ) {
+			return '';
+		}
 
-		$kept = array_values(
-			array_filter(
-				$tokens,
-				static fn( $token ) => '' !== $token
-					&& ! in_array( $token, $directionals, true )
-					&& ! in_array( $token, self::STREET_TYPE_TOKENS, true )
-			)
-		);
+		$kept = array();
+		foreach ( $tokens as $i => $token ) {
+			if ( '' === $token || in_array( $token, self::STREET_TYPE_TOKENS, true ) ) {
+				continue;
+			}
+
+			// A canonical directional is stripped unless the next token is a
+			// street-type word, in which case it is a street-name token.
+			$next_is_street_type = isset( $tokens[ $i + 1 ] ) && in_array( $tokens[ $i + 1 ], self::STREET_TYPE_TOKENS, true );
+			if ( isset( self::DIRECTIONAL_ALIASES[ $token ] ) && ! $next_is_street_type ) {
+				continue;
+			}
+
+			$kept[] = $token;
+		}
 
 		return implode( ' ', $kept );
 	}
@@ -1621,22 +1638,24 @@ class Venue_Taxonomy {
 		}
 
 		// Canonicalize directional tokens (#803), bounded so a street *named*
-		// "South Congress" is not rewritten: only a directional immediately
-		// after the leading house number ("8504 South Congress Ave") or
-		// immediately before a street-type word ("880 Island Park Dr West" —
-		// hypothetical) is canonicalized.
-		$tokens = preg_split( '/\s+/', trim( $address ) ) ?: array();
+		// "West" is not rewritten: only a directional NOT immediately
+		// followed by a street-type word is canonicalized. "100 West Street"
+		// keeps 'west' (street named West), while "8504 S Congress Ave"
+		// canonicalizes ('s' is followed by 'congress').
+		$tokens = preg_split( '/\s+/', trim( $address ) );
+		if ( ! is_array( $tokens ) ) {
+			$tokens = array();
+		}
 		foreach ( $tokens as $i => $token ) {
 			if ( ! isset( self::DIRECTIONAL_ALIASES[ $token ] ) ) {
 				continue;
 			}
 
-			$after_house_number = 1 === $i && isset( $tokens[0] ) && 1 === preg_match( '/^\d/', $tokens[0] );
-			$before_street_type = isset( $tokens[ $i + 1 ] ) && in_array( $tokens[ $i + 1 ], self::STREET_TYPE_TOKENS, true );
-
-			if ( $after_house_number || $before_street_type ) {
-				$tokens[ $i ] = self::DIRECTIONAL_ALIASES[ $token ];
+			if ( isset( $tokens[ $i + 1 ] ) && in_array( $tokens[ $i + 1 ], self::STREET_TYPE_TOKENS, true ) ) {
+				continue;
 			}
+
+			$tokens[ $i ] = self::DIRECTIONAL_ALIASES[ $token ];
 		}
 		$address = implode( ' ', $tokens );
 

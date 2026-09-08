@@ -142,7 +142,7 @@ class CheckVenuesCommand {
 		$missing_geocode = $this->find_venues_missing_geocode( $limit );
 
 		if ( 'json' === $format ) {
-			\WP_CLI::log( wp_json_encode(
+			\WP_CLI::log( (string) wp_json_encode(
 				array(
 					'total_scanned'   => count( $events ),
 					'scope'           => $scope,

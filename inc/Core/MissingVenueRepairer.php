@@ -56,13 +56,13 @@ class MissingVenueRepairer {
 		);
 
 		foreach ( $this->query_events( $scope, $days_ahead ) as $event ) {
-			$result['scanned']++;
+			++$result['scanned'];
 
 			if ( $this->has_venue_term( (int) $event->ID ) ) {
 				continue;
 			}
 
-			$result['missing']++;
+			++$result['missing'];
 
 			if ( $limit > 0 && $result['missing'] > $limit ) {
 				break;
@@ -72,16 +72,16 @@ class MissingVenueRepairer {
 			$venue_name = trim( (string) ( $attrs['venue'] ?? '' ) );
 
 			if ( '' === $venue_name ) {
-				$result['empty']++;
+				++$result['empty'];
 				continue;
 			}
 
 			$outcome = $this->resolve_event( (int) $event->ID, $event->post_title, $attrs, $venue_name, $apply );
 
-			$result[ $outcome['tally'] ]++;
+			++$result[ $outcome['tally'] ];
 
 			if ( $outcome['assigned'] ) {
-				$result['assigned']++;
+				++$result['assigned'];
 			}
 
 			$result['candidates'][] = $outcome['candidate'];
@@ -207,7 +207,7 @@ class MissingVenueRepairer {
 
 		foreach ( parse_blocks( $post->post_content ) as $block ) {
 			if ( 'data-machine-events/event-details' === $block['blockName'] ) {
-				return $block['attrs'] ?? array();
+				return $block['attrs'];
 			}
 		}
 

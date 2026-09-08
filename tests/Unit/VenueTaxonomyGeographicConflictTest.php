@@ -447,7 +447,9 @@ class VenueTaxonomyGeographicConflictTest extends WP_UnitTestCase {
 	}
 
 	public function test_normalizer_canonicalizes_full_directional_words(): void {
-		$this->assertSame( '1201 n w ave', Venue_Taxonomy::normalize_address_for_matching( '1201 North West Avenue' ) );
+		// 'west' is immediately followed by the street-type word 'avenue', so
+		// it is kept as a street-name token; only 'north' canonicalizes.
+		$this->assertSame( '1201 n west ave', Venue_Taxonomy::normalize_address_for_matching( '1201 North West Avenue' ) );
 	}
 
 	public function test_normalizer_maps_spelled_ordinals(): void {
@@ -458,9 +460,13 @@ class VenueTaxonomyGeographicConflictTest extends WP_UnitTestCase {
 		$this->assertSame( '36-38 broad st', Venue_Taxonomy::normalize_address_for_matching( '36-38 Broad St' ) );
 	}
 
-	public function test_normalizer_leaves_street_named_directional_untouched(): void {
-		// "South Congress" here is a street NAME with no house number and no
-		// adjacent street-type word — it must not be canonicalized.
-		$this->assertSame( 'south congress', Venue_Taxonomy::normalize_address_for_matching( 'South Congress' ) );
+	public function test_normalizer_leaves_street_named_directional_before_street_type_untouched(): void {
+		// "West Street" — West is the street NAME; a directional immediately
+		// followed by a street-type word must not canonicalize (#803 follow-up).
+		$this->assertNotSame(
+			Venue_Taxonomy::normalize_address_for_matching( '100 West Street' ),
+			Venue_Taxonomy::normalize_address_for_matching( '100 W Street' )
+		);
+		$this->assertSame( '100 west st', Venue_Taxonomy::normalize_address_for_matching( '100 West Street' ) );
 	}
 }
