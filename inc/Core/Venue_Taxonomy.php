@@ -315,8 +315,12 @@ class Venue_Taxonomy {
 
 		foreach ( $vocabulary as $key => $entry ) {
 			if ( is_string( $entry ) ) {
-				// Shape: 'slug' => 'Label'.
-				$slug  = is_string( $key ) ? $key : $entry;
+				// Shape: 'slug' => 'Label'. A bare string with no string key
+				// carries no slug and is malformed.
+				if ( ! is_string( $key ) ) {
+					continue;
+				}
+				$slug  = $key;
 				$label = $entry;
 			} elseif ( is_array( $entry ) ) {
 				$slug  = (string) ( $entry['slug'] ?? ( is_string( $key ) ? $key : '' ) );
@@ -348,10 +352,6 @@ class Venue_Taxonomy {
 	 * @return string Canonical slug, or '' when unresolved.
 	 */
 	public static function resolve_venue_tier( $value ): string {
-		if ( is_array( $value ) ) {
-			$value = reset( $value );
-		}
-
 		if ( ! is_scalar( $value ) ) {
 			return '';
 		}

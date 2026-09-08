@@ -19,8 +19,19 @@ use DataMachineEvents\Core\Venue_Taxonomy;
 
 class VenueTierMetaTest extends WP_UnitTestCase {
 
+	/** @var int[] */
+	private array $term_ids = array();
+
 	public function setUp(): void {
 		parent::setUp();
+
+		// VenueProfileMutations refuses to run inside an open transaction and
+		// WP_UnitTestCase wraps every test in one. Mirror the integration
+		// suite: commit out, run the canonical write path for real, and
+		// re-enter the transaction in tearDown so the framework can roll back.
+		global $wpdb;
+		$wpdb->query( 'COMMIT' );
+		$wpdb->query( 'SET autocommit = 1' );
 
 		if ( ! post_type_exists( Event_Post_Type::POST_TYPE ) ) {
 			Event_Post_Type::register();
@@ -30,7 +41,14 @@ class VenueTierMetaTest extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		global $wpdb;
 		remove_all_filters( 'data_machine_events_venue_tier_vocabulary' );
+		foreach ( array_reverse( $this->term_ids ) as $term_id ) {
+			wp_delete_term( $term_id, 'venue' );
+		}
+		$this->term_ids = array();
+		$wpdb->query( 'SET autocommit = 0' );
+		$wpdb->query( 'START TRANSACTION' );
 		parent::tearDown();
 	}
 
@@ -43,6 +61,7 @@ class VenueTierMetaTest extends WP_UnitTestCase {
 	private function make_venue( string $name ): int {
 		$created = wp_insert_term( $name, 'venue' );
 		$this->assertNotWPError( $created );
+		$this->term_ids[] = (int) $created['term_id'];
 
 		return (int) $created['term_id'];
 	}
@@ -175,6 +194,7 @@ class VenueTierMetaTest extends WP_UnitTestCase {
 
 		$this->assertSame( 'created', $result['match_status'] );
 		$this->assertGreaterThan( 0, $result['term_id'] );
+		$this->term_ids[] = (int) $result['term_id'];
 
 		// The import path must never write tier, even when upstream data carries it.
 		$this->assertSame( '', get_term_meta( $result['term_id'], Venue_Taxonomy::TIER_META_KEY, true ) );
