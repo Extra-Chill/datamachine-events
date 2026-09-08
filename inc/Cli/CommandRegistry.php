@@ -133,6 +133,10 @@ class CommandRegistry {
 				'file'  => $cli . 'UpdateEventCommand.php',
 				'class' => UpdateEventCommand::class,
 			),
+			'data-machine-events retract-missing'         => array(
+				'file'  => $cli . 'RetractMissingCommand.php',
+				'class' => RetractMissingCommand::class,
+			),
 			'data-machine-events batch-time-fix'          => array(
 				'file'  => $cli . 'BatchTimeFixCommand.php',
 				'class' => BatchTimeFixCommand::class,

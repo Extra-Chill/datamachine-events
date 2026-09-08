@@ -283,6 +283,7 @@ class DATAMACHINE_Events {
 			\DataMachineEvents\Abilities\MergedBillDetectAbilities::class,
 			\DataMachineEvents\Abilities\MergeEventPostsAbilities::class,
 			\DataMachineEvents\Abilities\MergedBillDecideAbilities::class,
+			\DataMachineEvents\Abilities\RetractMissingEventsAbilities::class,
 		);
 
 		foreach ( $ability_classes as $ability_class ) {
@@ -495,6 +496,11 @@ class DATAMACHINE_Events {
 		if ( file_exists( DATA_MACHINE_EVENTS_PLUGIN_DIR . 'inc/Abilities/MergedBillDecideAbilities.php' ) ) {
 			require_once DATA_MACHINE_EVENTS_PLUGIN_DIR . 'inc/Abilities/MergedBillDecideAbilities.php';
 			new \DataMachineEvents\Abilities\MergedBillDecideAbilities();
+		}
+
+		if ( file_exists( DATA_MACHINE_EVENTS_PLUGIN_DIR . 'inc/Abilities/RetractMissingEventsAbilities.php' ) ) {
+			require_once DATA_MACHINE_EVENTS_PLUGIN_DIR . 'inc/Abilities/RetractMissingEventsAbilities.php';
+			new \DataMachineEvents\Abilities\RetractMissingEventsAbilities();
 		}
 
 		// Chat tools for the merged-bill agent decision step (issue #256).
