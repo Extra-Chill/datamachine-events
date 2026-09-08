@@ -256,8 +256,8 @@ class TimezoneAbilities {
 				continue;
 			}
 
-			$venue_id          = $venue_terms[0];
-			$venue_term        = get_term( $venue_id );
+			$venue_id   = $venue_terms[0];
+			$venue_term = get_term( $venue_id );
 			if ( ! $venue_term instanceof \WP_Term ) {
 				continue;
 			}

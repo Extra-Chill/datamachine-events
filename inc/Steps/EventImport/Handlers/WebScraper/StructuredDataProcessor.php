@@ -98,7 +98,7 @@ class StructuredDataProcessor {
 					'image_url' => $event['imageUrl'] ?? '',
 				),
 				static function ( $value ) {
-					return '' !== $value && null !== $value;
+					return '' !== $value;
 				}
 			);
 			if ( ! empty( $scraper_fields ) ) {

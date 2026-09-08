@@ -525,9 +525,9 @@ class EventUpdateAbilities {
 			if ( ! empty( array_diff( $updated_fields, array( 'venue' ) ) ) ) {
 				$blocks[ $block_index ]['attrs'] = $new_attrs;
 				/** @var array<int, array{blockName: string|null, attrs: array<string,mixed>, innerBlocks: array<int,array>, innerHTML: string, innerContent: array<int,string|null>}> $blocks Same shape parse_blocks() returns; restated because the by-reference inner-block and attrs writes above lose the element shape to static analysis (runtime shape is unchanged). */
-				$new_content                     = serialize_blocks( $blocks );
-				$dates_error                     = null;
-				$capture_dates_error             = static function ( \WP_Error $error, int $failed_post_id ) use ( &$dates_error, $post_id ): void {
+				$new_content        = serialize_blocks( $blocks );
+				$dates_error        = null;
+				$capture_dates_error = static function ( \WP_Error $error, int $failed_post_id ) use ( &$dates_error, $post_id ): void {
 					if ( $post_id === $failed_post_id ) {
 						$dates_error = $error;
 					}
@@ -917,7 +917,7 @@ class EventUpdateAbilities {
 		$this->source_transaction_active = true;
 		$locked                          = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID = %d FOR UPDATE", $post_id ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact event transaction lock.
 		/** @var string $lock_error The shared wpdb stub pins this property to the literal '' default; at runtime it carries the last DB error. */
-		$lock_error                      = $wpdb->last_error;
+		$lock_error = $wpdb->last_error;
 		if ( $post_id !== (int) $locked || '' !== $lock_error ) {
 			$rollback = $this->rollbackSourceTransaction( $post_id );
 			return is_wp_error( $rollback ) ? $rollback : $this->sourceTransactionError( 'source_event_lock_failed', 'The source-owned event could not be locked.' );

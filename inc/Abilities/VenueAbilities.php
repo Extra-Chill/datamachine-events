@@ -471,14 +471,15 @@ class VenueAbilities {
 		}
 
 		$updated_term = get_term( $term->term_id, 'venue' );
+		$updated_name = $updated_term instanceof \WP_Term ? $updated_term->name : $term->name;
 		$venue_data   = Venue_Taxonomy::get_venue_data( $term->term_id );
 
 		return array(
 			'term_id'        => $term->term_id,
-			'name'           => $updated_term->name,
+			'name'           => $updated_name,
 			'updated_fields' => $result['updated_fields'],
 			'venue_data'     => $venue_data,
-			'message'        => "Updated venue '{$updated_term->name}': " . implode( ', ', $result['updated_fields'] ),
+			'message'        => "Updated venue '{$updated_name}': " . implode( ', ', $result['updated_fields'] ),
 		);
 	}
 

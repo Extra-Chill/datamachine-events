@@ -80,7 +80,7 @@ class CheckEventDateStatusCommand {
 		);
 
 		if ( 'json' === $format ) {
-			\WP_CLI::log( wp_json_encode( $summary, JSON_PRETTY_PRINT ) );
+			\WP_CLI::log( (string) wp_json_encode( $summary, JSON_PRETTY_PRINT ) );
 			return;
 		}
 

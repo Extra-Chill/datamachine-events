@@ -227,9 +227,9 @@ class MergedBillDetectAbilities {
 		$tt             = $wpdb->term_relationships;
 		$tx             = $wpdb->term_taxonomy;
 
-		$now_mysql   = current_time( 'mysql' );
-		$horizon_ts  = strtotime( $now_mysql . ' +' . $days_ahead . ' days' );
-		$horizon     = false !== $horizon_ts ? gmdate( 'Y-m-d H:i:s', $horizon_ts ) : '';
+		$now_mysql  = current_time( 'mysql' );
+		$horizon_ts = strtotime( $now_mysql . ' +' . $days_ahead . ' days' );
+		$horizon    = false !== $horizon_ts ? gmdate( 'Y-m-d H:i:s', $horizon_ts ) : '';
 
 		// Pull all candidate rows: upcoming published events with a venue
 		// term resolved. Use the identity index for title_hash + source_url
