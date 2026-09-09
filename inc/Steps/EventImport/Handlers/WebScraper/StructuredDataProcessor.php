@@ -165,15 +165,15 @@ class StructuredDataProcessor {
 	 */
 	private function applyVenueMeta( array &$event, array $venue_meta ): void {
 		$field_map = array(
-			'address'     => 'venueAddress',
-			'city'        => 'venueCity',
-			'state'       => 'venueState',
-			'zip'         => 'venueZip',
-			'country'     => 'venueCountry',
-			'phone'       => 'venuePhone',
-			'website'     => 'venueWebsite',
+			'address'       => 'venueAddress',
+			'city'          => 'venueCity',
+			'state'         => 'venueState',
+			'zip'           => 'venueZip',
+			'country'       => 'venueCountry',
+			'phone'         => 'venuePhone',
+			'website'       => 'venueWebsite',
 			'ticketing_url' => 'venueTicketingUrl',
-			'coordinates' => 'venueCoordinates',
+			'coordinates'   => 'venueCoordinates',
 		);
 
 		foreach ( $field_map as $meta_key => $event_key ) {
@@ -188,13 +188,13 @@ class StructuredDataProcessor {
 	 */
 	private function applyVenueConfigFields( array &$event, array $config ): void {
 		$field_map = array(
-			'venue_address' => 'venueAddress',
-			'venue_city'    => 'venueCity',
-			'venue_state'   => 'venueState',
-			'venue_zip'     => 'venueZip',
-			'venue_country' => 'venueCountry',
-			'venue_phone'   => 'venuePhone',
-			'venue_website' => 'venueWebsite',
+			'venue_address'       => 'venueAddress',
+			'venue_city'          => 'venueCity',
+			'venue_state'         => 'venueState',
+			'venue_zip'           => 'venueZip',
+			'venue_country'       => 'venueCountry',
+			'venue_phone'         => 'venuePhone',
+			'venue_website'       => 'venueWebsite',
 			'venue_ticketing_url' => 'venueTicketingUrl',
 		);
 

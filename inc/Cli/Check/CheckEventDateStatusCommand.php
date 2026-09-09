@@ -71,12 +71,12 @@ class CheckEventDateStatusCommand {
 		unset( $row );
 
 		$summary = array(
-			'apply'       => $apply,
-			'count'       => count( $rows ),
+			'apply'        => $apply,
+			'count'        => count( $rows ),
 			'input_cursor' => $after_id,
-			'next_cursor' => $batch['next_cursor'],
-			'has_more'    => $batch['has_more'],
-			'rows'        => $rows,
+			'next_cursor'  => $batch['next_cursor'],
+			'has_more'     => $batch['has_more'],
+			'rows'         => $rows,
 		);
 
 		if ( 'json' === $format ) {

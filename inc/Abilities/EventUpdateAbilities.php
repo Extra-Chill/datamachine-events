@@ -525,8 +525,8 @@ class EventUpdateAbilities {
 			if ( ! empty( array_diff( $updated_fields, array( 'venue' ) ) ) ) {
 				$blocks[ $block_index ]['attrs'] = $new_attrs;
 				/** @var array<int, array{blockName: string|null, attrs: array<string,mixed>, innerBlocks: array<int,array>, innerHTML: string, innerContent: array<int,string|null>}> $blocks Same shape parse_blocks() returns; restated because the by-reference inner-block and attrs writes above lose the element shape to static analysis (runtime shape is unchanged). */
-				$new_content        = serialize_blocks( $blocks );
-				$dates_error        = null;
+				$new_content         = serialize_blocks( $blocks );
+				$dates_error         = null;
 				$capture_dates_error = static function ( \WP_Error $error, int $failed_post_id ) use ( &$dates_error, $post_id ): void {
 					if ( $post_id === $failed_post_id ) {
 						$dates_error = $error;
