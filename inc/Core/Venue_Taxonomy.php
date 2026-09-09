@@ -72,9 +72,33 @@ class Venue_Taxonomy {
 	 * @var string[]
 	 */
 	private const STREET_TYPE_TOKENS = array(
-		'st', 'ave', 'blvd', 'dr', 'rd', 'ln', 'ct', 'hwy', 'pkwy', 'pl', 'cir',
-		'way', 'walk', 'trl', 'ter', 'sq', 'loop', 'row', 'aly', 'plz', 'ctr',
-		'park', 'path', 'run', 'xing', 'rte', 'tpke',
+		'st',
+		'ave',
+		'blvd',
+		'dr',
+		'rd',
+		'ln',
+		'ct',
+		'hwy',
+		'pkwy',
+		'pl',
+		'cir',
+		'way',
+		'walk',
+		'trl',
+		'ter',
+		'sq',
+		'loop',
+		'row',
+		'aly',
+		'plz',
+		'ctr',
+		'park',
+		'path',
+		'run',
+		'xing',
+		'rte',
+		'tpke',
 	);
 
 	/**
