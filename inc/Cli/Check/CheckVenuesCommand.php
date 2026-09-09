@@ -123,7 +123,8 @@ class CheckVenuesCommand {
 		// Broken timezone: delegate to existing ability if available
 		$broken_timezone = array();
 		$no_venue_count  = 0;
-		$ability         = wp_get_ability( 'data-machine-events/find-broken-timezone-events' );
+
+		$ability = wp_get_ability( 'data-machine-events/find-broken-timezone-events' );
 		if ( $ability ) {
 			$result = $ability->execute(
 				array(
