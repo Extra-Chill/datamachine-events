@@ -504,7 +504,7 @@ class EventTaxonomyAssigner {
 			$term = get_term_by( 'slug', $selection, 'location' );
 		}
 
-		return ( $term && ! is_wp_error( $term ) ) ? (int) $term->term_id : 0;
+		return $term ? (int) $term->term_id : 0;
 	}
 
 	/**

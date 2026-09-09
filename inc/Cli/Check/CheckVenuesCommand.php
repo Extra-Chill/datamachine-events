@@ -117,14 +117,13 @@ class CheckVenuesCommand {
 
 		// Missing-venue repair pass: resolve identities from each event's own
 		// block attrs; assign matched terms only with --apply (#803).
-		$repairer = new MissingVenueRepairer();
-		$repair   = $repairer->repair( $scope, $days_ahead, $apply );
+		$repairer        = new MissingVenueRepairer();
+		$repair          = $repairer->repair( $scope, $days_ahead, $apply );
 
 		// Broken timezone: delegate to existing ability if available
 		$broken_timezone = array();
 		$no_venue_count  = 0;
-
-		$ability = wp_get_ability( 'data-machine-events/find-broken-timezone-events' );
+		$ability         = wp_get_ability( 'data-machine-events/find-broken-timezone-events' );
 		if ( $ability ) {
 			$result = $ability->execute(
 				array(
