@@ -298,6 +298,11 @@ class VenueNormalizationTest extends WP_UnitTestCase {
 			)
 		);
 
+		// Before creation, the conflicting state has no address identity to find.
+		$this->assertNull(
+			Venue_Taxonomy::find_venue_by_address( '400 State St.', 'Springfield', 'MO', 'US' )
+		);
+
 		$state_conflict = Venue_Taxonomy::find_or_create_venue(
 			$name,
 			array(
@@ -307,6 +312,24 @@ class VenueNormalizationTest extends WP_UnitTestCase {
 				'country' => 'US',
 			)
 		);
+
+		$this->assertNotNull( $first['term_id'] );
+		$this->assertNotNull( $state_conflict['term_id'] );
+		$this->assertNotSame( $first['term_id'], $state_conflict['term_id'] );
+		$this->assertSame( 'created', $state_conflict['match_status'] );
+		$this->assertSame( 'MO', get_term_meta( (int) $state_conflict['term_id'], '_venue_state', true ) );
+
+		// The created term is now the address identity for the MO geography.
+		$this->assertSame(
+			(int) $state_conflict['term_id'],
+			Venue_Taxonomy::find_venue_by_address( '400 State St.', 'Springfield', 'MO', 'US' )
+		);
+
+		// Before creation, the conflicting country has no address identity either.
+		$this->assertNull(
+			Venue_Taxonomy::find_venue_by_address( '400 State St.', 'Springfield', 'IL', 'CA' )
+		);
+
 		$country_conflict = Venue_Taxonomy::find_or_create_venue(
 			$name,
 			array(
@@ -317,26 +340,17 @@ class VenueNormalizationTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertNotNull( $first['term_id'] );
-		$this->assertNull(
-			Venue_Taxonomy::find_venue_by_address( '400 State St.', 'Springfield', 'MO', 'US' )
-		);
-		$this->assertNull(
-			Venue_Taxonomy::find_venue_by_address( '400 State St.', 'Springfield', 'IL', 'CA' )
-		);
-
-		// The address identity is still rejected, and each conflicting
-		// geography is now a distinct venue (#806).
-		$this->assertNotNull( $state_conflict['term_id'] );
-		$this->assertNotSame( $first['term_id'], $state_conflict['term_id'] );
-		$this->assertSame( 'created', $state_conflict['match_status'] );
-		$this->assertSame( 'MO', get_term_meta( (int) $state_conflict['term_id'], '_venue_state', true ) );
-
 		$this->assertNotNull( $country_conflict['term_id'] );
 		$this->assertNotSame( $first['term_id'], $country_conflict['term_id'] );
 		$this->assertNotSame( $state_conflict['term_id'], $country_conflict['term_id'] );
 		$this->assertSame( 'created', $country_conflict['match_status'] );
 		$this->assertSame( 'CA', get_term_meta( (int) $country_conflict['term_id'], '_venue_country', true ) );
+
+		// The created term is now the address identity for the CA geography.
+		$this->assertSame(
+			(int) $country_conflict['term_id'],
+			Venue_Taxonomy::find_venue_by_address( '400 State St.', 'Springfield', 'IL', 'CA' )
+		);
 
 		// The original term is untouched.
 		$this->assertSame( 'IL', get_term_meta( (int) $first['term_id'], '_venue_state', true ) );

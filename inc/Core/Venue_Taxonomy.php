@@ -71,7 +71,11 @@ class Venue_Taxonomy {
 	 *
 	 * @var string[]
 	 */
-	private const STREET_TYPE_TOKENS = array( 'st', 'ave', 'blvd', 'dr', 'rd', 'ln', 'ct', 'hwy', 'pkwy', 'pl', 'cir', 'way' );
+	private const STREET_TYPE_TOKENS = array(
+		'st', 'ave', 'blvd', 'dr', 'rd', 'ln', 'ct', 'hwy', 'pkwy', 'pl', 'cir',
+		'way', 'walk', 'trl', 'ter', 'sq', 'loop', 'row', 'aly', 'plz', 'ctr',
+		'park', 'path', 'run', 'xing', 'rte', 'tpke',
+	);
 
 	/**
 	 * Bounded ordinal word map for address matching (#803).
@@ -1027,7 +1031,10 @@ class Venue_Taxonomy {
 	 * followed by a recognized street-type word somewhere in the string.
 	 * City/zip/country-only strings ("Charleston, SC 29492-2901, United
 	 * States") and bare postal codes hold no street evidence and cannot
-	 * contradict a stored street address (#798).
+	 * contradict a stored street address (#798). The recognized list covers
+	 * the full canonical street-type vocabulary so real venue addresses on
+	 * ways, trails, terraces, squares, and the like count as evidence
+	 * (#806).
 	 *
 	 * @param string $address Raw address string.
 	 * @return bool
@@ -1045,7 +1052,10 @@ class Venue_Taxonomy {
 			return false;
 		}
 
-		return 1 === preg_match( '/\b(st|ave|blvd|dr|rd|ln|ct|ste|apt|hwy|pkwy|pl|cir)\b/', $normalized );
+		return 1 === preg_match(
+			'/\b(st|ave|blvd|dr|rd|ln|ct|ste|apt|hwy|pkwy|pl|cir|way|walk|trl|ter|sq|loop|row|aly|plz|ctr|park|path|run|xing|rte|tpke)\b/',
+			$normalized
+		);
 	}
 
 	/**
@@ -1838,6 +1848,19 @@ class Venue_Taxonomy {
 			'/\bparkway\b/'   => 'pkwy',
 			'/\bplace\b/'     => 'pl',
 			'/\bcircle\b/'    => 'cir',
+			// Additional street-type words with standard abbreviations; way,
+			// walk, loop, row, park, path, and run are already canonical
+			// (#806).
+			'/\bterrace\b/'   => 'ter',
+			'/\btrail\b/'     => 'trl',
+			'/\bsquare\b/'    => 'sq',
+			'/\bcentre\b/'    => 'ctr',
+			'/\bcenter\b/'    => 'ctr',
+			'/\bcrossing\b/'  => 'xing',
+			'/\bturnpike\b/'  => 'tpke',
+			'/\bplaza\b/'     => 'plz',
+			'/\balley\b/'     => 'aly',
+			'/\broute\b/'     => 'rte',
 		);
 
 		// Bounded ordinal map (#803): "First Avenue" and "1st Avenue" are the

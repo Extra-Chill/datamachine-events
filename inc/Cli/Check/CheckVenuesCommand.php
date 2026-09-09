@@ -313,11 +313,14 @@ class CheckVenuesCommand {
 
 			$stored_rows = array();
 			foreach ( (array) $group['stored'] as $stored ) {
+				$stored_address = trim( (string) $stored['address'] );
+				$stored_city    = trim( (string) $stored['city'] );
+
 				$stored_rows[] = sprintf(
 					'#%d %s (%s)',
 					$stored['term_id'],
-					'' !== trim( (string) $stored['address'] ) ? $stored['address'] : 'no stored address',
-					'' !== trim( (string) $stored['city'] ) ? $stored['city'] : 'no city'
+					'' !== $stored_address ? $stored_address : 'no stored address',
+					'' !== $stored_city ? $stored_city : 'no city'
 				);
 			}
 

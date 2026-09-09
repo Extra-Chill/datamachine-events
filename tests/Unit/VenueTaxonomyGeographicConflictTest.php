@@ -429,6 +429,17 @@ class VenueTaxonomyGeographicConflictTest extends WP_UnitTestCase {
 		$this->assertFalse( Venue_Taxonomy::address_has_street_component( '29492' ) );
 	}
 
+	public function test_address_with_new_street_types_has_street_component(): void {
+		// Real venue addresses use more street types than the core set (#806).
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '101 Founders Way' ) );
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '1 River Trail' ) );
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '9 Waterfront Square' ) );
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '500 Center' ) );
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '300 Turnpike' ) );
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '22 The Terrace' ) );
+		$this->assertTrue( Venue_Taxonomy::address_has_street_component( '12 Crossing' ) );
+	}
+
 	// ---------------------------------------------------------------------
 	// Part C: normalize_address_for_matching (#803)
 	// ---------------------------------------------------------------------
@@ -509,6 +520,18 @@ class VenueTaxonomyGeographicConflictTest extends WP_UnitTestCase {
 		$this->assertSame( '5 townes st', Venue_Taxonomy::normalize_address_for_matching( '5 Townes Streets' ) );
 		$this->assertSame( '100 georgia ave', Venue_Taxonomy::normalize_address_for_matching( '100 Georgia Avenues' ) );
 		$this->assertSame( '9 county rd', Venue_Taxonomy::normalize_address_for_matching( '9 County Roads' ) );
+	}
+
+	public function test_normalizer_maps_new_street_type_words(): void {
+		$this->assertSame( '450 ter', Venue_Taxonomy::normalize_address_for_matching( '450 Terrace' ) );
+		$this->assertSame( '1 river trl', Venue_Taxonomy::normalize_address_for_matching( '1 River Trail' ) );
+		$this->assertSame( '9 waterfront sq', Venue_Taxonomy::normalize_address_for_matching( '9 Waterfront Square' ) );
+		$this->assertSame( '500 ctr', Venue_Taxonomy::normalize_address_for_matching( '500 Center' ) );
+		$this->assertSame( '500 ctr', Venue_Taxonomy::normalize_address_for_matching( '500 Centre' ) );
+		$this->assertSame( '300 tpke', Venue_Taxonomy::normalize_address_for_matching( '300 Turnpike' ) );
+		$this->assertSame( '12 xing', Venue_Taxonomy::normalize_address_for_matching( '12 Crossing' ) );
+		$this->assertSame( '2 plz', Venue_Taxonomy::normalize_address_for_matching( '2 Plaza' ) );
+		$this->assertSame( '101 founders way', Venue_Taxonomy::normalize_address_for_matching( '101 Founders Way' ) );
 	}
 
 	// ---------------------------------------------------------------------
